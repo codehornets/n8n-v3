@@ -1,0 +1,655 @@
+{
+  "name": "Add_Leads_To_Outreach_Tool",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "16ZwlfvRCH1WrL6dJmcw6CkTDl9saFfotC4fV1DfObd4",
+          "mode": "list",
+          "cachedResultName": "LinkedinScrapper",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ZwlfvRCH1WrL6dJmcw6CkTDl9saFfotC4fV1DfObd4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ZwlfvRCH1WrL6dJmcw6CkTDl9saFfotC4fV1DfObd4/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        0
+      ],
+      "id": "a6020d7b-b0a9-4d5b-b2c7-965513bf5e90",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "KOnNlXCf80twom2w",
+          "name": "Google Sheets Trigger"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d45a41b7-13be-4721-a7b3-d54b38791ba3",
+              "leftValue": "={{ $json['qualify grade'] }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "761e4eaf-b4e2-4b56-8f3e-88305cb0ac25",
+              "leftValue": "={{ $json['Lead added to email outreach tool'] }}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3325f2ce-4234-4f58-a65e-1aa03d0b46a6",
+              "leftValue": "={{ $json['Video Html'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "28dc2c53-ea73-460b-8677-76f6a966881f",
+              "leftValue": "={{ $json.Icebreaker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        120,
+        0
+      ],
+      "id": "a6d5cb1f-0696-4e68-a5e3-8230601d298f",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "16ZwlfvRCH1WrL6dJmcw6CkTDl9saFfotC4fV1DfObd4",
+          "mode": "list",
+          "cachedResultName": "LinkedinScrapper",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ZwlfvRCH1WrL6dJmcw6CkTDl9saFfotC4fV1DfObd4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16ZwlfvRCH1WrL6dJmcw6CkTDl9saFfotC4fV1DfObd4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Linkedin Url": "={{ $('Google Sheets Trigger').item.json['Linkedin Url'] }}",
+            "Lead added to email outreach tool": "={{ ($json.status == \"1\" || $json.ok == true) ? \"YES\" : \"NO\" }}"
+          },
+          "matchingColumns": [
+            "Linkedin Url"
+          ],
+          "schema": [
+            {
+              "id": "Linkedin Url",
+              "displayName": "Linkedin Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Linkedin Title",
+              "displayName": "Linkedin Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Emails",
+              "displayName": "Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company_linkedin",
+              "displayName": "company_linkedin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nb of employees",
+              "displayName": "nb of employees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "first name",
+              "displayName": "first name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last name",
+              "displayName": "last name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company name",
+              "displayName": "company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qualify grade",
+              "displayName": "qualify grade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qualification potential",
+              "displayName": "qualification potential",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company description",
+              "displayName": "company description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company size on linkedin",
+              "displayName": "company size on linkedin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "specialities",
+              "displayName": "specialities",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updates",
+              "displayName": "updates",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "follower count",
+              "displayName": "follower count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video id",
+              "displayName": "Video id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video link",
+              "displayName": "Video link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video Html",
+              "displayName": "Video Html",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Icebreaker id",
+              "displayName": "Icebreaker id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Icebreaker",
+              "displayName": "Icebreaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead added to email outreach tool",
+              "displayName": "Lead added to email outreach tool",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        860,
+        180
+      ],
+      "id": "2f327e9d-d378-4dde-8ef0-58af85bf8ac8",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TecU7qmU3ypQwLE8",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.instantly.ai/api/v2/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "campaign",
+              "value": "b26e451b-c363-4715-b1ed-48f536f78f37"
+            },
+            {
+              "name": "email",
+              "value": "={{ $('Google Sheets Trigger').item.json.Emails }}"
+            },
+            {
+              "name": "website",
+              "value": "={{ $('Google Sheets Trigger').item.json.Website }}"
+            },
+            {
+              "name": "first_name",
+              "value": "={{ $('Google Sheets Trigger').item.json['first name'] }}"
+            },
+            {
+              "name": "last_name",
+              "value": "={{ $('Google Sheets Trigger').item.json['last name'] }}"
+            },
+            {
+              "name": "pl_value_lead",
+              "value": "={{ $('Google Sheets Trigger').item.json['qualification potential'] }}"
+            },
+            {
+              "name": "custom_variables",
+              "value": "={{ {\n\"video\": $json['Video Html'],\n\"icebreaker\": $json.Icebreaker\n} }}"
+            },
+            {
+              "name": "company_name",
+              "value": "={{ $('Google Sheets Trigger').item.json['company name'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        80
+      ],
+      "id": "a975c0c9-4b66-4ba1-8359-a169e8404873",
+      "name": "Instantly_Add_Lead",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "V1qsbxJ1RkXOvhOk",
+          "name": "Instantly"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://server.smartlead.ai/api/v1/campaigns/1594751/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"lead_list\": [\n    {\n      \"first_name\": $json['first name'],\n      \"last_name\": $json['last name'],\n      \"email\": $json.Emails,\n      \"phone_number\": $json.Phone,\n      \"company_name\": $json['company name'],\n      \"website\": $json.Website,\n      \"location\": $json.country,\n      \"custom_fields\": {\n        \"video\": $json['Video Html'],\n        \"icebreaker\": $json.Icebreaker\n      },\n      \"linkedin_profile\": $json['Linkedin Url'],\n      \"company_url\": $json.company_linkedin\n    }\n  ],\n  \"settings\": {\n    \"ignore_global_block_list\": true,\n    \"ignore_unsubscribe_list\": true,\n    \"ignore_duplicate_leads_in_other_campaign\": false\n  }\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        280
+      ],
+      "id": "b55a86d9-150a-465a-bbe3-0a38783a97bf",
+      "name": "Smartlead_Add_Lead",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XxhLD6nvsizA6Fcq",
+          "name": "Smartlead"
+        },
+        "httpQueryAuth": {
+          "id": "mr5GFHRwcQE2MByR",
+          "name": "SmartleadQuery"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        380,
+        0
+      ],
+      "id": "bdbb0c44-8a3e-4794-97da-65f3372cc678",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        280
+      ],
+      "id": "75e0f010-16e5-42fb-9230-4ca70f94d378",
+      "name": "Wait",
+      "webhookId": "97054742-4d18-4077-8d9f-fec04c3f11d6"
+    },
+    {
+      "parameters": {
+        "content": "### Retrieve ready to be processed lead",
+        "height": 260,
+        "width": 220,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -80
+      ],
+      "id": "d75802f9-3341-4e1c-a0fb-091f5c6ed78a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Filter qualified leads only that have personalization available",
+        "height": 260,
+        "width": 220,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -80
+      ],
+      "id": "fdacac81-4ca4-4081-8e36-f671d6b96cf4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### Add leads to your outreach tool and send personalized emails",
+        "height": 600,
+        "width": 900,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -80
+      ],
+      "id": "941e5006-e028-48d7-ab45-e206ae560034",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instantly_Add_Lead": {
+      "main": [
+        []
+      ]
+    },
+    "Smartlead_Add_Lead": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Smartlead_Add_Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d2449199-6656-47d5-bc50-4674004820a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "79d2a920483140d901c2ba16c16067c00cdaf831538c5d09c874f17e9a5aee7d"
+  },
+  "id": "hXUVgxUpZQBVsM40",
+  "tags": []
+}
