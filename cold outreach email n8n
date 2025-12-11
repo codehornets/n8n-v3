@@ -1,0 +1,681 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1536,
+        1040
+      ],
+      "id": "08e9a1f7-b2d7-4985-8eff-3c2206544d3a",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1856,
+        1152
+      ],
+      "id": "70d28c81-c42b-4b68-836f-5be50466aace",
+      "name": "Wait",
+      "webhookId": "9c54bc41-8f55-4502-8ece-b470c0ea6755"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g",
+          "mode": "list",
+          "cachedResultName": "Linkedin profile scarper ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Linkedin Url": "={{ $json.link }}",
+            "Title": "={{ $json.title }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Linkedin Url",
+              "displayName": "Linkedin Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2704,
+        1360
+      ],
+      "id": "e94499fe-b3f3-496b-9f27-f9e7d421cb61",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gm5Ld0K96vOCJic4",
+          "name": "Google Sheets solenaryy"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        976,
+        1040
+      ],
+      "id": "0e50d02a-f330-4be9-96e4-9a61f3d3a8d1",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all()\n  .flatMap(item => item.json.items || [])\n  .map(result => ({\n    title: result && result.title ? result.title : \"\",\n    link: result && result.link ? result.link : \"\",\n  }))\n  .filter((obj, index, self) =>\n    obj.link && index === self.findIndex((o) => o.link === obj.link)\n  );"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        1360
+      ],
+      "id": "c275eae2-cead-458f-a666-47d1a7c2e10b",
+      "name": "filterResult"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1536,
+        1488
+      ],
+      "id": "8ca52f56-ec9b-442e-be96-8f7d8816b6a0",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1952,
+        1600
+      ],
+      "id": "83b3faaf-326a-45e1-8d16-77287c5e6854",
+      "name": "Wait1",
+      "webhookId": "9c54bc41-8f55-4502-8ece-b470c0ea6755"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2272,
+        1344
+      ],
+      "id": "45965823-bfd5-4e11-b8bf-c9a7856c01a2",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/customsearch/v1?key=AIzaSyAYa0UJ1ZxVEQDH2dVMaLWjQtg6IrPu_EY&cx=706f087&q=[QUERY]",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "=solar companies toronto"
+            },
+            {
+              "name": "start",
+              "value": "={{ $('Page1').item.json.start }}"
+            },
+            {
+              "name": "num",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        1152
+      ],
+      "id": "4cbe7996-695e-42a1-840b-42d1006301c3",
+      "name": "getLinkedinProfile"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/customsearch/v1?key=AIzaSyAYa0UJ1ZxVEQDH2dVMaLWjQtg&cx=[CX NUMBER]&q=[QUERY]",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "=solar companies Vancouver"
+            },
+            {
+              "name": "start",
+              "value": "={{ $('Page1').item.json.start }}"
+            },
+            {
+              "name": "num",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1744,
+        1600
+      ],
+      "id": "212617cf-1f9e-4884-9937-b32faf5568e8",
+      "name": "getLinkedinProfile2"
+    },
+    {
+      "parameters": {
+        "content": "## Scrape 100  profiles from a google search",
+        "height": 420,
+        "width": 680,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        928
+      ],
+      "id": "867a6d62-7c88-4ff7-8c7f-168d966421d2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Scrape 100  profiles from a second google search\nNote: Google api is limited to the first 100 results for a specific search++",
+        "height": 440,
+        "width": 680
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        1376
+      ],
+      "id": "d3664cee-e6af-4935-82b7-2d63f6fc4b2b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Paginate through the first 100 results",
+        "height": 280,
+        "width": 260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        896,
+        928
+      ],
+      "id": "30f990b8-fec5-43c7-a6e8-f8a7d4a2e0f9",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Filter to retrieve only the title and url for each results",
+        "height": 300,
+        "width": 260,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        1216
+      ],
+      "id": "fb5007dc-fea1-438b-9c67-a34d55275659",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Merge data for both search \nNote: you can add more than just 200 profiles",
+        "height": 300,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        1216
+      ],
+      "id": "5e4a4bad-8d36-4e2e-b6b8-7f6be1bd879d",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Write all 200 profiles inside a sheet\nNote: You can send it to CRM or something else instead",
+        "height": 300,
+        "width": 280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        1216
+      ],
+      "id": "07a9a150-6def-490a-8c63-20c50be02e8d",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "jsCode": "///////////////////////////////\nlet start = 1; // Initial page\n\nconst limit = 100; // Total number of profiles to search\nconst batchSize = 10; // Google Search returns 100 results per page\nconst output = [];\n\nwhile (start < limit) {\n  output.push({ json: { start: start } });\n  start += batchSize; // Increment by 100 for each page\n}\n\nreturn output;\n///////////////////////////////"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        1040
+      ],
+      "id": "58341fd3-96bc-402a-bfe7-64fb88098170",
+      "name": "Page1"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "fromEmail": "jj",
+        "toEmail": "j",
+        "subject": "k",
+        "message": "k",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1888,
+        1952
+      ],
+      "id": "da779ab2-1cd5-427a-a6a1-e0c2e788336e",
+      "name": "SendAndWait email",
+      "webhookId": "34e0a1dc-0f57-48eb-94cf-c8fdd649028d",
+      "credentials": {
+        "smtp": {
+          "id": "66ODdmhoxamMzLKm",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://email-scraper5.p.rapidapi.com/emails",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.link }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "email-scraper5.p.rapidapi.com"
+            },
+            {
+              "name": "x-rapidapi-key",
+              "value": "dsddd"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1632,
+        1952
+      ],
+      "id": "51237912-7341-46cb-b941-097e9960e9b1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        1920
+      ],
+      "id": "4ad4c1b1-7194-47de-9b73-e8ee0616db7d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g",
+          "mode": "list",
+          "cachedResultName": "Linkedin profile scarper ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1072,
+        1936
+      ],
+      "id": "ee8db7e4-140d-4ace-ac13-b197e8f32418",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gm5Ld0K96vOCJic4",
+          "name": "Google Sheets solenaryy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 15
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        1936
+      ],
+      "id": "bac6f33c-9871-4454-9db0-3273ff861b65",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g",
+          "mode": "list",
+          "cachedResultName": "Linkedin profile scarper ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RN7JW0aGmAoJ3PI9AukbtAMUIV08nyKk93ti0J72s9g/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2160,
+        1968
+      ],
+      "id": "e8074ba7-e255-42e3-b357-2ae94be49034",
+      "name": "updates",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gm5Ld0K96vOCJic4",
+          "name": "Google Sheets solenaryy"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "getLinkedinProfile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Page1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filterResult": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "getLinkedinProfile2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "filterResult",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getLinkedinProfile": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getLinkedinProfile2": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendAndWait email": {
+      "main": [
+        [
+          {
+            "node": "updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "SendAndWait email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1cbef7f2783acfad469291bdbc61e01be0e96f22066040a37b8d21a424901315"
+  }
+}
