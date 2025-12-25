@@ -1,0 +1,107 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wedding",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "554be7a6-b822-4dfa-8588-4b5308b25ed9",
+      "name": "Webhook",
+      "webhookId": "23a4509b-9bf3-4e70-aaf5-95fbf9d80a4e"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://kokoro.62.84.188.136.sslip.io/v1/audio/speech",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "kokoro"
+            },
+            {
+              "name": "input",
+              "value": "={{ $json.body.text }}"
+            },
+            {
+              "name": "voice",
+              "value": "af_heart"
+            },
+            {
+              "name": "response_format",
+              "value": "mp3"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "7e492aa1-4adc-4774-b7b5-bcda99c7740c",
+      "name": "Kokoro TTS Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        240,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "responseDataSource": "set",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        496,
+        80
+      ],
+      "id": "bc77c0c0-f6e0-4287-b71e-543aa130614c",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Kokoro TTS Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kokoro TTS Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "daa0b7901d4a776472219a94690785ce9aff3147577100d343e77ae9851d1539"
+  }
+}
