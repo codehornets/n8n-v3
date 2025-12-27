@@ -1,0 +1,455 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Yelp Business Scraper via Scrape.do\n\n## How it works\n1. User submits a Yelp business URL via the web form\n2. Scrape.do fetches the page with JavaScript rendering enabled\n3. Workflow polls until the scraping job completes\n4. HTML is parsed to extract business details (name, rating, phone, address, etc.)\n5. Data is automatically appended to your Google Sheet\n\n## Setup steps\n1. Get your API token from [scrape.do/dashboard](https://scrape.do/?utm_source=n8n&utm_medium=yelp)\n2. Replace `YOUR_SCRAPEDO_TOKEN` in the 3 HTTP Request nodes\n3. Create a Google Sheet with these columns:\n   `name, overall_rating, reviews_count, url, phone, address, price_range, categories, website, hours, images_videos_urls, scraped_at`\n4. Connect your Google Sheets OAuth2 credentials\n5. Update `YOUR_GOOGLE_SHEET_ID` in the Google Sheets node\n\n**Docs:** [scrape.do/documentation](https://scrape.do/?utm_source=n8n&utm_medium=yelp)",
+        "height": 496,
+        "width": 1048
+      },
+      "id": "ef6af318-0357-49b5-ab20-0cd2801711db",
+      "name": "📋 Workflow Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🔄 Scraping Loop\nSubmits URL to Scrape.do async API and polls until the job completes successfully.",
+        "height": 604,
+        "width": 1004,
+        "color": 5
+      },
+      "id": "474bd9db-f514-44fa-8f0f-a201ac9ea04d",
+      "name": "Scraping Section",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🔧 Data Extraction\nFetches raw HTML and parses business details using regex and JSON-LD patterns.",
+        "height": 316,
+        "width": 244,
+        "color": 5
+      },
+      "id": "8c10ac16-2784-4a21-87b7-edcee23c87b7",
+      "name": "Processing Section",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        624
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "formTitle": "Yelp Business URL Scraper",
+        "formDescription": "Enter a Yelp business URL to scrape business details",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Yelp Business URL",
+              "placeholder": "https://www.yelp.com/biz/business-name-city",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d79d308-e7e0-4b70-8d7c-02e624281fb8",
+      "name": "📥 Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        -208,
+        784
+      ],
+      "webhookId": "ae4aacb7-a062-4172-8817-f51716a841b7",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://q.scrape.do/api/v1/jobs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Token",
+              "value": "da173484dd6b40308789ae0235f6dbda098e484583a"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"Targets\": [$json[\"Yelp Business URL\"]], \"Super\": true, \"GeoCode\": \"us\", \"Device\": \"desktop\", \"Render\": { \"BlockResources\": false, \"WaitUntil\": \"networkidle2\", \"CustomWait\": 3000 } }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "d5d1005e-d065-4694-9acb-a3c5e8260517",
+      "name": "🔍 Create Scrape.do Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        96,
+        784
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "a52f21c0-ec48-4313-83ef-e0154529021e",
+      "name": "⏳ Wait 15s",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        336,
+        784
+      ],
+      "webhookId": "10b45556-5e91-4387-abd0-f9078b220286",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "=https://q.scrape.do/api/v1/jobs/{{ $('🔍 Create Scrape.do Job').item.json.JobID }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Token",
+              "value": "da173484dd6b40308789ae0235f6dbda098e484583a"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "fb35c1a1-f4e6-48a9-8e1c-f7226d25bcb4",
+      "name": "📡 Check Job Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        576,
+        784
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "35ed620d-b5d5-4e97-bcc5-52b283d85616",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "success"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "863504b5-d76b-4c2e-a27e-e4b37a0bc5ff",
+      "name": "🔁 Is Job Complete?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        816,
+        784
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "8844d66c-e3f4-447b-bb20-1390cd695eaf",
+      "name": "⏳ Wait 10s Retry",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        576,
+        976
+      ],
+      "webhookId": "retry-wait-webhook",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "=https://q.scrape.do/api/v1/jobs/{{ $('🔍 Create Scrape.do Job').item.json.JobID }}/{{ $('🔍 Create Scrape.do Job').item.json.TaskIDs[0] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Token",
+              "value": "da173484dd6b40308789ae0235f6dbda098e484583a"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "5e1372ba-a2d5-4456-98d9-0a362b7665f8",
+      "name": "📥 Fetch Task Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1120,
+        784
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse Yelp business page HTML to extract structured data\nconst html = $input.item.json.Content || '';\nconst url = $input.item.json.URL || '';\n\n// Helper to decode HTML entities\nfunction decodeHTML(str) {\n  if (!str) return '';\n  return str\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&#x2F;/g, '/');\n}\n\n// Extract business name\nlet name = '';\nconst titleMatch = html.match(/<title[^>]*>([^<]+)/i);\nif (titleMatch) {\n  name = titleMatch[1].split(' - ')[0].split(' | ')[0].trim();\n}\nconst jsonLdMatch = html.match(/\"name\"\\s*:\\s*\"([^\"]+)\"/i);\nif (jsonLdMatch) {\n  name = decodeHTML(jsonLdMatch[1]);\n}\n\n// Extract overall rating\nlet overall_rating = '';\nconst ratingMatch = html.match(/\"aggregateRating\"[^}]*\"ratingValue\"\\s*:\\s*\"?([\\d.]+)\"?/i);\nif (ratingMatch) {\n  overall_rating = ratingMatch[1];\n} else {\n  const altRating = html.match(/aria-label=\"([\\d.]+)\\s*star\\s*rating\"/i);\n  if (altRating) overall_rating = altRating[1];\n}\n\n// Extract review count\nlet reviews_count = '';\nconst reviewMatch = html.match(/\"reviewCount\"\\s*:\\s*\"?(\\d+)\"?/i);\nif (reviewMatch) {\n  reviews_count = reviewMatch[1];\n} else {\n  const altReview = html.match(/(\\d+)\\s*reviews?/i);\n  if (altReview) reviews_count = altReview[1];\n}\n\n// Extract phone number\nlet phone = '';\nconst phoneMatch = html.match(/\"telephone\"\\s*:\\s*\"([^\"]+)\"/i);\nif (phoneMatch) {\n  phone = phoneMatch[1];\n} else {\n  const altPhone = html.match(/\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}/);\n  if (altPhone) phone = altPhone[0];\n}\n\n// Extract address\nlet address = '';\nconst addressMatch = html.match(/\"address\"\\s*:\\s*\\{[^}]*\"streetAddress\"\\s*:\\s*\"([^\"]+)\"/i);\nif (addressMatch) {\n  address = decodeHTML(addressMatch[1]);\n}\nconst cityMatch = html.match(/\"addressLocality\"\\s*:\\s*\"([^\"]+)\"/i);\nconst stateMatch = html.match(/\"addressRegion\"\\s*:\\s*\"([^\"]+)\"/i);\nconst zipMatch = html.match(/\"postalCode\"\\s*:\\s*\"([^\"]+)\"/i);\nif (cityMatch) address += `, ${cityMatch[1]}`;\nif (stateMatch) address += `, ${stateMatch[1]}`;\nif (zipMatch) address += ` ${zipMatch[1]}`;\n\n// Extract price range\nlet price_range = '';\nconst priceMatch = html.match(/\"priceRange\"\\s*:\\s*\"([^\"]+)\"/i);\nif (priceMatch) {\n  price_range = priceMatch[1];\n} else {\n  const dollarMatch = html.match(/>\\s*(\\$+)\\s*</i);\n  if (dollarMatch) price_range = dollarMatch[1];\n}\n\n// Extract categories\nlet categories = '';\nconst categoryMatches = html.match(/\"itemListElement\"[^\\]]*\\]/i);\nif (categoryMatches) {\n  const cats = categoryMatches[0].match(/\"name\"\\s*:\\s*\"([^\"]+)\"/gi);\n  if (cats) {\n    categories = cats.map(c => c.match(/\"([^\"]+)\"$/)[1]).join(', ');\n  }\n}\n\n// Extract images (first 5)\nlet images_videos_urls = '';\nconst imageMatches = html.match(/https:\\/\\/s3-media[\\d]*\\.fl\\.yelpcdn\\.com\\/bphoto\\/[^\"'\\s]+/gi);\nif (imageMatches) {\n  const uniqueImages = [...new Set(imageMatches)].slice(0, 5);\n  images_videos_urls = uniqueImages.join(', ');\n}\n\n// Extract website\nlet website = '';\nconst websiteMatch = html.match(/biz-website[^>]*>\\s*<a[^>]*href=\"([^\"]+)\"/i);\nif (websiteMatch) {\n  website = decodeHTML(websiteMatch[1]);\n}\n\n// Extract business hours\nlet hours = '';\nconst hoursMatch = html.match(/\"openingHours\"\\s*:\\s*\\[([^\\]]+)\\]/i);\nif (hoursMatch) {\n  hours = hoursMatch[1].replace(/\"/g, '').replace(/,/g, '; ');\n}\n\nreturn {\n  json: {\n    name: name || 'N/A',\n    overall_rating: overall_rating || 'N/A',\n    reviews_count: reviews_count || 'N/A',\n    url: url,\n    phone: phone || 'N/A',\n    address: address || 'N/A',\n    price_range: price_range || 'N/A',\n    categories: categories || 'N/A',\n    website: website || 'N/A',\n    hours: hours || 'N/A',\n    images_videos_urls: images_videos_urls || 'N/A',\n    scraped_at: new Date().toISOString()\n  }\n};"
+      },
+      "id": "eb6afe9f-dfaf-42ff-a746-00086b54dec9",
+      "name": "🔧 Parse Yelp HTML",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1376,
+        784
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1SFFpUiDkBYAVoTR6pQ0q8RG_gfinr8dOU1q4uQyOlwc",
+          "mode": "list",
+          "cachedResultName": "Yellow page ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SFFpUiDkBYAVoTR6pQ0q8RG_gfinr8dOU1q4uQyOlwc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SFFpUiDkBYAVoTR6pQ0q8RG_gfinr8dOU1q4uQyOlwc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "7045ac2d-e800-4d9b-8a45-491296032f74",
+      "name": "📊 Store to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1632,
+        784
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Fv2JDyrxPRC6r99Q",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 📋 Form Input\nStarts the workflow when the user submits a business Yelp URL through the form.",
+        "height": 256,
+        "width": 220
+      },
+      "id": "5b119556-ecd9-44d0-89e5-eb6229312883",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        672
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🚀 Scrape.do Job\nCreates an async scraping job via Scrape.do API with JS rendering enabled for Yelp.",
+        "height": 288,
+        "width": 236,
+        "color": 3
+      },
+      "id": "39293133-e968-4b02-98f5-197ca806d413",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        48,
+        656
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🔧 Parse HTML\nExtracts business data (name, rating, reviews, URL, images) from the raw HTML using regex patterns.",
+        "height": 288,
+        "width": 200,
+        "color": 6
+      },
+      "id": "8eee808f-b153-4c07-9d2e-a3697ad49077",
+      "name": "Sticky Note - Parse",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1328,
+        624
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 📊 Google Sheets\nStores the extracted business data (name, rating, reviews, phone, address, etc.) to your Google Sheet.",
+        "height": 312,
+        "width": 280,
+        "color": 4
+      },
+      "id": "71da3117-f7e1-4b8c-8ec9-a7dde44faeaf",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1568,
+        624
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "📥 Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "🔍 Create Scrape.do Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Create Scrape.do Job": {
+      "main": [
+        [
+          {
+            "node": "⏳ Wait 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏳ Wait 15s": {
+      "main": [
+        [
+          {
+            "node": "📡 Check Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📡 Check Job Status": {
+      "main": [
+        [
+          {
+            "node": "🔁 Is Job Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔁 Is Job Complete?": {
+      "main": [
+        [
+          {
+            "node": "📥 Fetch Task Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "⏳ Wait 10s Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏳ Wait 10s Retry": {
+      "main": [
+        [
+          {
+            "node": "📡 Check Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📥 Fetch Task Results": {
+      "main": [
+        [
+          {
+            "node": "🔧 Parse Yelp HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔧 Parse Yelp HTML": {
+      "main": [
+        [
+          {
+            "node": "📊 Store to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "daa0b7901d4a776472219a94690785ce9aff3147577100d343e77ae9851d1539"
+  }
+}
